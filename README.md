@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kids Shorts App (Next.js)
 
-## Getting Started
+A minimal **YouTube Shorts-style** feed that shows **English kids videos**.
 
-First, run the development server:
+## 🎬 What it does
+
+- Fetches **short video results** from the YouTube Data API (if you provide an API key).
+- Falls back to a small built-in list of kids shorts if no API key is available.
+- Presents videos in a **full-screen scrollable feed** (like YouTube Shorts).
+
+## 🚀 Getting Started
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔑 Optional: Dynamic videos via YouTube API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To make the list dynamic (different videos on each load), provide a YouTube API key:
 
-## Learn More
+1. Create a `.env.local` file at the repo root.
+2. Add:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+YOUTUBE_API_KEY=YOUR_API_KEY_HERE
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If no API key is set, the app will use the built-in fallback list in `src/data/shorts.ts`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧩 Customize the fallback list
 
-## Deploy on Vercel
+Edit the fallback list in:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `src/data/shorts.ts`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Each entry contains `id`, `title`, `channel`, `channelUrl`, `videoId`, and an optional `description`.

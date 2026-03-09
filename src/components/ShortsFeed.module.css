@@ -1,0 +1,107 @@
+.page {
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #fdf7ff 0%, #f0f5ff 55%, #e8f4ff 100%);
+  position: relative;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.headerText h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.headerText p {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: rgba(102, 126, 234, 0.16);
+  color: #2a2a2a;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.feed {
+  height: 100%;
+  padding-top: 80px;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+}
+
+.shortWrapper {
+  height: calc(100vh - 80px);
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+    background: radial-gradient(circle at top, #0b0f1a 0%, #06101b 55%, #03050b 100%);
+  }
+
+  .header {
+    background: rgba(15, 18, 28, 0.65);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .headerText p {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .badge {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .footer {
+    background: rgba(18, 21, 34, 0.7);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+}
