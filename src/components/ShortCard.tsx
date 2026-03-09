@@ -9,7 +9,7 @@ type Props = {
 
 export default function ShortCard({ short, active }: Props) {
   const thumbnail = `https://i.ytimg.com/vi/${short.videoId}/hqdefault.jpg`;
-  const iframeSrc = `https://www.youtube.com/embed/${short.videoId}?autoplay=1&playsinline=1&rel=0&controls=1`;
+  const iframeSrc = `https://www.youtube.com/embed/${short.videoId}?autoplay=1&mute=0&playsinline=1&rel=0&controls=1`;
 
   return (
     <article className={styles.card}>

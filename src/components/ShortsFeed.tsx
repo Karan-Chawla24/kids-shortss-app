@@ -80,7 +80,7 @@ export default function ShortsFeed() {
       </section>
 
       <footer className={styles.footer}>
-        <p>Tap the video to play (muted autoplay) and scroll to switch shorts.</p>
+        <p>Tap the video to play and scroll to switch shorts.</p>
       </footer>
     </main>
   );
