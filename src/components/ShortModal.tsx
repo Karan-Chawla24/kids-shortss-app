@@ -32,10 +32,10 @@ export default function ShortModal({ videoId, onClose }: Props) {
           className={styles.video}
           width="100%"
           height="100%"
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`}
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&playsinline=1&rel=0&enablejsapi=1`}
           title="YouTube video player"
           frameBorder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
+          allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
         />
       </div>

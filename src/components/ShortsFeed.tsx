@@ -74,7 +74,10 @@ export default function ShortsFeed() {
             data-index={index}
             className={styles.shortWrapper}
           >
-            <ShortCard short={short} active={index === activeIndex} />
+            <ShortCard
+              short={short}
+              active={index === activeIndex}
+            />
           </div>
         ))}
       </section>

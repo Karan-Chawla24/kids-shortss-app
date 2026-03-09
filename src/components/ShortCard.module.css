@@ -25,6 +25,20 @@
   height: 100%;
 }
 
+.unmuteHint {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 0.85rem;
+  text-align: center;
+  z-index: 4;
+}
+
 
 .thumbWrapper {
   position: relative;
