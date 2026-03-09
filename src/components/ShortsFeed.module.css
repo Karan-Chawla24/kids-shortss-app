@@ -79,6 +79,51 @@
   z-index: 10;
 }
 
+/* ── Tap-to-start overlay ── */
+
+.startOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.startContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.startIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  color: #e33;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.startOverlay:active .startIcon {
+  transform: scale(0.92);
+}
+
+.startText {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
 @media (prefers-color-scheme: dark) {
   .page {
     background: radial-gradient(circle at top, #0b0f1a 0%, #06101b 55%, #03050b 100%);

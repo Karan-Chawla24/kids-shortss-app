@@ -9,6 +9,7 @@ import ShortCard from "./ShortCard";
 export default function ShortsFeed() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [shorts, setShorts] = useState<ShortItem[]>(fallbackShorts);
+  const [started, setStarted] = useState(false);
   const refs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -29,14 +30,21 @@ export default function ShortsFeed() {
   }, []);
 
   useEffect(() => {
+    if (!started) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0));
+          .sort(
+            (a, b) =>
+              (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0)
+          );
 
         if (visible[0]) {
-          const index = Number(visible[0].target.getAttribute("data-index"));
+          const index = Number(
+            visible[0].target.getAttribute("data-index")
+          );
           setActiveIndex(index);
         }
       },
@@ -50,7 +58,7 @@ export default function ShortsFeed() {
     return () => {
       observer.disconnect();
     };
-  }, [shorts]);
+  }, [shorts, started]);
 
   return (
     <main className={styles.page}>
@@ -64,6 +72,20 @@ export default function ShortsFeed() {
         </div>
       </header>
 
+      {/* ── Tap-to-start overlay ── */}
+      {!started && (
+        <div
+          className={styles.startOverlay}
+          onClick={() => setStarted(true)}
+          onTouchEnd={() => setStarted(true)}
+        >
+          <div className={styles.startContent}>
+            <div className={styles.startIcon}>▶</div>
+            <p className={styles.startText}>Tap to Start Watching</p>
+          </div>
+        </div>
+      )}
+
       <section className={styles.feed}>
         {shorts.map((short, index) => (
           <div
@@ -76,14 +98,14 @@ export default function ShortsFeed() {
           >
             <ShortCard
               short={short}
-              active={index === activeIndex}
+              active={started && index === activeIndex}
             />
           </div>
         ))}
       </section>
 
       <footer className={styles.footer}>
-        <p>Tap the video to play and scroll to switch shorts.</p>
+        <p>Scroll to switch shorts.</p>
       </footer>
     </main>
   );

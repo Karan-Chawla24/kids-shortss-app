@@ -1,44 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef, useEffect } from "react";
 import Image from "next/image";
 import type { ShortItem } from "@/data/shorts";
 import styles from "./ShortCard.module.css";
 
-/* ------------------------------------------------------------------ */
-/*  Load the official YouTube IFrame API script once                   */
-/* ------------------------------------------------------------------ */
-let apiReady = false;
-const readyCallbacks: (() => void)[] = [];
-
-function ensureYTApi() {
-  if (typeof window === "undefined") return;
-  if (apiReady || document.getElementById("yt-iframe-api")) return;
-
-  const tag = document.createElement("script");
-  tag.id = "yt-iframe-api";
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-
-  window.onYouTubeIframeAPIReady = () => {
-    apiReady = true;
-    readyCallbacks.forEach((cb) => cb());
-    readyCallbacks.length = 0;
-  };
-}
-
-function onApiReady(cb: () => void) {
-  if (apiReady) {
-    cb();
-  } else {
-    readyCallbacks.push(cb);
-    ensureYTApi();
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
 type Props = {
   short: ShortItem;
   active: boolean;
@@ -46,83 +12,67 @@ type Props = {
 
 export default function ShortCard({ short, active }: Props) {
   const thumbnail = `https://i.ytimg.com/vi/${short.videoId}/hqdefault.jpg`;
-  const containerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<YTPlayerInstance | null>(null);
-  const prevActiveRef = useRef(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  /* Create / destroy the YT player when this card becomes active */
+  // Direct iframe src with all params needed for iOS Safari autoplay:
+  // autoplay=1  → request autoplay
+  // mute=1      → required by iOS Safari for autoplay to work
+  // playsinline=1 → play inline instead of fullscreen on iOS
+  // enablejsapi=1 → allow postMessage control for unmuting later
+  const iframeSrc = active
+    ? `https://www.youtube.com/embed/${short.videoId}?autoplay=1&mute=1&playsinline=1&rel=0&controls=1&enablejsapi=1`
+    : undefined;
+
+  // Once the iframe loads and is playing (muted), attempt to unmute via
+  // the YouTube postMessage API. This works on desktop immediately.
+  // On iOS it may silently fail until a user gesture occurs.
   useEffect(() => {
-    if (active && !prevActiveRef.current) {
-      onApiReady(() => {
-        const container = containerRef.current;
-        if (!container) return;
+    if (!active || !iframeRef.current) return;
 
-        // Clear any leftover content
-        container.innerHTML = "";
-        const div = document.createElement("div");
-        div.id = `yt-player-${short.videoId}-${Date.now()}`;
-        container.appendChild(div);
+    const iframe = iframeRef.current;
 
-        playerRef.current = new window.YT.Player(div.id, {
-          videoId: short.videoId,
-          width: "100%",
-          height: "100%",
-          playerVars: {
-            autoplay: 1,
-            mute: 1, // muted so autoplay works on all browsers
-            playsinline: 1,
-            rel: 0,
-            controls: 1,
-            modestbranding: 1,
-            enablejsapi: 1,
-            origin: window.location.origin,
-          },
-          events: {
-            onReady: (event: YTPlayerEvent) => {
-              // Autoplay is already running (muted).
-              // Attempt to unmute — works on desktop; on iOS it may
-              // need a user gesture inside the player first.
-              event.target.unMute();
-              event.target.setVolume(100);
-            },
-          },
-        });
-      });
-    }
-
-    if (!active && prevActiveRef.current) {
-      if (playerRef.current) {
-        try {
-          playerRef.current.destroy();
-        } catch {
-          /* ignore */
-        }
-        playerRef.current = null;
-      }
-    }
-
-    prevActiveRef.current = active;
-  }, [active, short.videoId]);
-
-  /* Cleanup on unmount */
-  useEffect(() => {
-    return () => {
-      if (playerRef.current) {
-        try {
-          playerRef.current.destroy();
-        } catch {
-          /* ignore */
-        }
-        playerRef.current = null;
+    const tryUnmute = () => {
+      try {
+        iframe.contentWindow?.postMessage(
+          JSON.stringify({ event: "command", func: "unMute", args: [] }),
+          "*"
+        );
+        iframe.contentWindow?.postMessage(
+          JSON.stringify({
+            event: "command",
+            func: "setVolume",
+            args: [100],
+          }),
+          "*"
+        );
+      } catch {
+        /* cross-origin — ignore */
       }
     };
-  }, []);
+
+    // Try unmuting at a few intervals after the iframe loads
+    const t1 = setTimeout(tryUnmute, 1500);
+    const t2 = setTimeout(tryUnmute, 3000);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [active]);
 
   return (
     <article className={styles.card}>
       <div className={styles.player}>
         {active ? (
-          <div ref={containerRef} className={styles.video} />
+          <iframe
+            ref={iframeRef}
+            className={styles.video}
+            src={iframeSrc}
+            title={short.title}
+            frameBorder="0"
+            allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture; fullscreen"
+            allowFullScreen
+          />
         ) : (
           <div className={styles.thumbWrapper}>
             <Image
